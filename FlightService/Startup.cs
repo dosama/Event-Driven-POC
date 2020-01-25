@@ -31,7 +31,7 @@ namespace FlightService
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+           
             services.AddSingleton<IFlightBookingService, FlightBookingService>();
             services.AddSingleton<IBookingRepository, BookingRepository>();
             services.AddDbContext<FlightContext>

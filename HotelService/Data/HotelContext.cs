@@ -15,7 +15,7 @@ namespace HotelService.Data
         {
         }
 
-        public virtual DbSet<Reservation> Reservation { get; set; }
+        public virtual DbSet<Reservations> Reservations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,11 +28,9 @@ namespace HotelService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Reservation>(entity =>
+            modelBuilder.Entity<Reservations>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.CreatedDate).HasColumnType("date");
 

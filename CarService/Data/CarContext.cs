@@ -30,24 +30,17 @@ namespace CarService.Data
         {
             modelBuilder.Entity<Rents>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.CarNumber)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.CarNumber).HasMaxLength(50);
 
                 entity.Property(e => e.CreatedDate).HasColumnType("date");
 
                 entity.Property(e => e.RentPrice).HasColumnType("money");
 
-                entity.Property(e => e.Staus)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.Staus).HasMaxLength(50);
 
                 entity.Property(e => e.TransactionId)
-                    .IsRequired()
                     .HasColumnName("TransactionID")
                     .HasMaxLength(50);
             });

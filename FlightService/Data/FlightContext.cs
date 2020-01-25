@@ -30,9 +30,7 @@ namespace FlightService.Data
         {
             modelBuilder.Entity<Bookings>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.BookingStatus)
                     .IsRequired()

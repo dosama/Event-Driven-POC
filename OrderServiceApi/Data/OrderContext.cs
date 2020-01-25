@@ -32,8 +32,6 @@ namespace OrderServiceApi.Data
             {
                 entity.HasKey(e => e.OrderNumber);
 
-                entity.Property(e => e.OrderNumber).ValueGeneratedNever();
-
                 entity.Property(e => e.CarRentId).HasColumnName("CarRentID");
 
                 entity.Property(e => e.ConfirmationDate).HasColumnType("date");

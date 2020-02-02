@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CarService.Data;
 using CarService.Models;
 using CarService.Repositories.Rents;
 
@@ -20,7 +19,7 @@ namespace CarService.Service
         {
             try
             {
-                var carRentId = _rentRepository.RentCar(new Rents()
+                var carRentId = _rentRepository.RentCar(new Data.Rents()
                 {
                     CarNumber = model.CarNumber,
                     CreatedDate = model.CreatedDate,

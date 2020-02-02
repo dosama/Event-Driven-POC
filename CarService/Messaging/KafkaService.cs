@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using OrderServiceApi.Service;
 
-namespace OrderServiceApi.Messaging
+namespace CarService.Messaging
 {
     public class KafkaService: IKafkaService,IDisposable
     {
         private IProducer<string, string> _kafkaProducer;
         private IConsumer<string,string> _kafkaConsumer;
-        private IOrderEventHandler _orderEventHandler;
+        private ICarEventHandler _orderEventHandler;
 
-        public KafkaService(IOrderEventHandler orderEventHandler)
+        public KafkaService(ICarEventHandler orderEventHandler)
         {
             _orderEventHandler = orderEventHandler;
             Initialize("localhost:9092");
@@ -38,7 +34,7 @@ namespace OrderServiceApi.Messaging
         {
             var consumerConfig = new ConsumerConfig
             {
-                GroupId = "orders-consumer-group",
+                GroupId = "hotel-consumer-group",
                 BootstrapServers = uri,
                 // Note: The AutoOffsetReset property determines the start offset in the event
                 // there are not yet any committed offsets for the consumer group for the
@@ -53,7 +49,7 @@ namespace OrderServiceApi.Messaging
 
         private async Task StartConsumeMessages()
         {
-            _kafkaConsumer.Subscribe(KafkaConstants.Order_Topic);
+            _kafkaConsumer.Subscribe(KafkaConstants.Car_Topic);
 
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (_, e) => {

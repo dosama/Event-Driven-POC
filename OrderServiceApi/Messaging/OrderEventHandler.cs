@@ -1,12 +1,9 @@
-﻿using OrderServiceApi.Messaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OrderServiceApi.Messaging.Data;
-using OrderServiceApi.Models;
+using OrderServiceApi.Repositories.Order;
+using OrderServiceApi.Service;
 
-namespace OrderServiceApi.Service
+namespace OrderServiceApi.Messaging
 {
     public class OrderEventHandler: IOrderEventHandler
     {
@@ -24,15 +21,15 @@ namespace OrderServiceApi.Service
             {
                 case KafkaConstants.Hotel_Order_Done_Event:
                     var hotelModel = _messageSerializer.DeSerialize<HotelOrderConfirmedMessage>(message);
-                    _orderService.ConfirmHotelOrder(hotelModel);
+                    _orderService. ConfirmHotelOrder(hotelModel);
                     return;
                 case KafkaConstants.Flight_Order_Done_Event:
                     var flightModel = _messageSerializer.DeSerialize<FlightOrderConfirmedMessage>(message);
-                    _orderService.ConfirmFlightOrder(flightModel);
+                    _orderService. ConfirmFlightOrder(flightModel);
                     return;
                 case KafkaConstants.Car_Order_Done_Event:
                     var carModel = _messageSerializer.DeSerialize<CarOrderConfirmedMessage>(message);
-                    _orderService.ConfirmCarOrder(carModel);
+                    _orderService. ConfirmCarOrder(carModel);
                     return;
                 case KafkaConstants.Hotel_Order_Not_Completed_Event:
                 case KafkaConstants.Flight_Order_Not_Completed_Event:
@@ -41,5 +38,6 @@ namespace OrderServiceApi.Service
                     return;
             }
         }
+
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using HotelService.Data;
 using HotelService.Messaging.Data;
 using HotelService.Models;
+using HotelService.Repositories.Reservations;
 using HotelService.Service;
 
 namespace HotelService.Messaging
@@ -10,9 +12,9 @@ namespace HotelService.Messaging
     {
         private IHotelReservationService _hotelReservationService;
         private IMessageSerializer _messageSerializer;
-        public HotelEventHandler(IHotelReservationService hotelReservationService, IMessageSerializer messageSerializer)
+        public HotelEventHandler(IHotelReservationService hotelReservationOrder, IMessageSerializer messageSerializer)
         {
-            _hotelReservationService = hotelReservationService;
+            _hotelReservationService = hotelReservationOrder;
             _messageSerializer = messageSerializer;
         }
         
@@ -36,5 +38,6 @@ namespace HotelService.Messaging
                     return;
             }
         }
+
     }
 }

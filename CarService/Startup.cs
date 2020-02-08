@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CarService.Data;
+using CarService.Messaging;
 using CarService.Repositories;
 using CarService.Repositories.Rents;
 using CarService.Service;
@@ -30,10 +31,16 @@ namespace CarService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddSingleton<IRentCarService, RentCarService>();
-            services.AddSingleton<IRentRepository, RentRepository>();
+           
             services.AddDbContext<CarContext>
                 (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
+            services.AddSingleton<IRentCarService, RentCarService>();
+            services.AddSingleton<IRentRepository, RentRepository>();
+
+            services.AddSingleton<ICarEventHandler, CarEventHandler>();
+            services.AddSingleton<ICarEventProducer, CarEventProducer>();
+            services.AddSingleton<IKafkaService, KafkaService>();
+            services.AddSingleton<IMessageSerializer, MessageSelrializer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

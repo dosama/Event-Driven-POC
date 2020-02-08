@@ -8,6 +8,7 @@ namespace OrderServiceApi.Repositories.Order
         Task<int> AddOrder(Data.Orders model);
         Task CancelOrder(string transactionId);
         Task<bool> IsConfirmedOrder(string transationId);
+        Task UpdateOrderConfirmationData(string transactionId);
         Task ConfirmHotelOrder(string transactionId , int reservationId);
         Task ConfirmFlightOrder(string transactionId, int flightBookingId);
         Task ConfirmCarOrder(string transactionId, int carRentId);

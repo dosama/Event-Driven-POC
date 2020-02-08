@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FlightService.Data;
+using FlightService.Messaging;
+using FlightService.Messaging.Data;
 using FlightService.Models;
 using FlightService.Repositories.Bookings;
 
@@ -9,19 +11,19 @@ namespace FlightService.Service
     class FlightBookingService : IFlightBookingService
     {
         private readonly IBookingRepository _bookingRepository;
-
-        public FlightBookingService(IBookingRepository bookingRepository)
+        private IFlightEventProducer _flightEventProducer;
+        public FlightBookingService(IBookingRepository bookingRepository, IFlightEventProducer flightEventProducer)
         {
             _bookingRepository = bookingRepository;
-       
+            _flightEventProducer = flightEventProducer;
         }
 
-        public Task<int> BookFlight(BookingModel model)
+        public async Task<int> BookFlight(BookingModel model)
         {
 
             try
             {
-                var carbookingId = _bookingRepository.BookFlight(new Bookings()
+                var flightbookingId = await _bookingRepository.BookFlight(new Bookings()
                 {
                     FlightNumber = model.FlightNumber,
                     CreatedDate = model.CreatedDate,
@@ -29,13 +31,21 @@ namespace FlightService.Service
                     TransactionId = model.TransactionId
                 });
 
-                return carbookingId;
+                _flightEventProducer.SendOrderDoneMessage(new FlightOrderConfirmedMessage()
+                {
+                    TransactionId = model.TransactionId,
+                    FlightBookingId = flightbookingId
+                });
+
+                return flightbookingId;
 
             }
             catch (Exception e)
             {
+
+                _flightEventProducer.SendOrderNotCompleterdMessage(model.TransactionId);
                 Console.WriteLine(e);
-                throw;
+                return -1;
             }
          
         }

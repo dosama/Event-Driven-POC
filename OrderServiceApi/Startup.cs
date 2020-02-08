@@ -5,10 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OrderServiceApi.Data;
+using OrderServiceApi.Messaging;
+using OrderServiceApi.Repositories.Order;
+using OrderServiceApi.Service;
+using OrderServiceApi.SMS;
 
 namespace OrderServiceApi
 {
@@ -25,6 +31,17 @@ namespace OrderServiceApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDbContext<OrderContext>
+                (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
+
+            services.AddSingleton<IOrderService, OrderService>();
+            services.AddSingleton<IOrderRepository, OrderRepository>();
+            services.AddSingleton<IOrderEventHandler, OrderEventHandler>();
+            services.AddSingleton<IOrderEventProducer, OrderEventProducer>();
+            services.AddSingleton<IKafkaService, KafkaService>();
+            services.AddSingleton<IMessageSerializer, MessageSelrializer>();
+            services.AddSingleton<ISmsService, SmsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

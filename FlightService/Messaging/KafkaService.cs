@@ -9,13 +9,13 @@ namespace FlightService.Messaging
     {
         private IProducer<string, string> _kafkaProducer;
         private IConsumer<string,string> _kafkaConsumer;
-        private IFlightEventHandler _orderEventHandler;
+        private IServiceProvider _serviceProvider;
 
-        public KafkaService(IFlightEventHandler orderEventHandler)
+        public KafkaService(IServiceProvider serviceProvider)
         {
-            _orderEventHandler = orderEventHandler;
+            _serviceProvider = serviceProvider;
             Initialize("localhost:9092");
-            StartConsumeMessages();
+            new Thread(() => StartConsumeMessages()).Start();
         }
       
         private void Initialize(string uri)
@@ -34,7 +34,7 @@ namespace FlightService.Messaging
         {
             var consumerConfig = new ConsumerConfig
             {
-                GroupId = "flight-consumer-group",
+                GroupId = "test-consumer-group",
                 BootstrapServers = uri,
                 // Note: The AutoOffsetReset property determines the start offset in the event
                 // there are not yet any committed offsets for the consumer group for the
@@ -50,7 +50,7 @@ namespace FlightService.Messaging
         private async Task StartConsumeMessages()
         {
             _kafkaConsumer.Subscribe(KafkaConstants.Flight_Topic);
-
+            var eventHandler = _serviceProvider.GetService(typeof(IFlightEventHandler)) as IFlightEventHandler;
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (_, e) => {
                 e.Cancel = true; // prevent the process from terminating.
@@ -64,7 +64,7 @@ namespace FlightService.Messaging
                     try
                     {
                         var result = _kafkaConsumer.Consume(cts.Token);
-                        _orderEventHandler.Handle(result.Key, result.Value);
+                        eventHandler.Handle(result.Key, result.Value);
                         Console.WriteLine($"Consumed message '{result.Value}' at: '{result.TopicPartitionOffset}'.");
                     }
                     catch (ConsumeException e)

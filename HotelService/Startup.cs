@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HotelService.Data;
+using HotelService.Messaging;
 using HotelService.Repositories.Reservations;
 using HotelService.Service;
 using Microsoft.AspNetCore.Builder;
@@ -30,10 +31,16 @@ namespace HotelService
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<IHotelReservationService, HotelReservationService>();
-            services.AddSingleton<IReservationRepository, ReservationRepository>();
+           
             services.AddDbContext<HotelContext>
                 (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
+
+            services.AddSingleton<IHotelReservationService, HotelReservationService>();
+            services.AddSingleton<IReservationRepository, ReservationRepository>();
+            services.AddSingleton<IHotelEventHandler, HotelEventHandler>();
+            services.AddSingleton<IHotelEventProducer, HotelEventProducer>();
+            services.AddSingleton<IKafkaService, KafkaService>();
+            services.AddSingleton<IMessageSerializer, MessageSelrializer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

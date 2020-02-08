@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CarService.Messaging;
 using CarService.Messaging.Data;
 using CarService.Models;
+using CarService.Repositories.Rents;
 using CarService.Service;
+using CarService.Data;
 
 namespace CarService.Messaging
 {
@@ -37,5 +40,6 @@ namespace CarService.Messaging
                     return;
             }
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OrderServiceApi.Data;
 
@@ -36,6 +37,15 @@ namespace OrderServiceApi.Repositories.Order
             return order.CarRentId != null && order.FlightBookingId != null && order.HotelReservationId != null;
 
         }
+
+        public async Task UpdateOrderConfirmationData(string transactionId)
+        {
+            var order = await OrderContext.Orders.FirstOrDefaultAsync(x => x.TransactionId == transactionId);
+            order.ConfirmationDate = DateTime.Now;
+            order.OrderStatus = "Confirmed";
+            OrderContext.SaveChanges();
+        }
+
 
         public async Task ConfirmHotelOrder(string transactionId, int reservationId)
         {

@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FlightService.Data;
 using FlightService.Messaging.Data;
 using FlightService.Models;
+using FlightService.Repositories.Bookings;
 using FlightService.Service;
 
 namespace FlightService.Messaging
 {
     public class FlightEventHandler: IFlightEventHandler
     {
-        private IFlightBookingService _flightBookingService;
+        private IFlightBookingService _bookingService;
         private IMessageSerializer _messageSerializer;
-        public FlightEventHandler(IFlightBookingService flightBookingService, IMessageSerializer messageSerializer)
+        public FlightEventHandler(IFlightBookingService bookingService, IMessageSerializer messageSerializer)
         {
-            _flightBookingService = flightBookingService;
+            _bookingService = bookingService;
             _messageSerializer = messageSerializer;
         }
         
@@ -22,12 +24,12 @@ namespace FlightService.Messaging
             {
                 case KafkaConstants.Place_Flight_Order_Event:
                     var flightModel = _messageSerializer.DeSerialize<PlaceFlightOrderMessage>(message);
-                    _flightBookingService.BookFlight(new BookingModel()
+                    _bookingService.BookFlight(new BookingModel()
                     { TransactionId = flightModel.TransactionId,BookingStatus = "Done",CreatedDate = DateTime.Now,FlightNumber = flightModel.FlightNumber});
                    
                     return;
                 case KafkaConstants.Cancel_Flight_Order_Event:
-                    _flightBookingService.CancelBookFlight(message);
+                    _bookingService.CancelBookFlight(message);
                     return;
             }
         }

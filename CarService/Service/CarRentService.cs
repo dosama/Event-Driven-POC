@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CarService.Messaging;
+using CarService.Messaging.Data;
 using CarService.Models;
 using CarService.Repositories.Rents;
 
@@ -8,18 +10,21 @@ namespace CarService.Service
     class RentCarService : IRentCarService
     {
         private readonly IRentRepository _rentRepository;
+        private ICarEventProducer _carEventProducer;
 
-        public RentCarService(IRentRepository rentRepository)
+        public RentCarService(IRentRepository rentRepository, ICarEventProducer carEventProducer)
         {
             _rentRepository = rentRepository;
-       
+            _carEventProducer = carEventProducer;
+
+
         }
 
-        public Task<int> RentCar(RentModel model)
+        public async Task<int> RentCar(RentModel model)
         {
             try
             {
-                var carRentId = _rentRepository.RentCar(new Data.Rents()
+                var carRentId = await _rentRepository.RentCar(new Data.Rents()
                 {
                     CarNumber = model.CarNumber,
                     CreatedDate = model.CreatedDate,
@@ -28,12 +33,20 @@ namespace CarService.Service
                     TransactionId = model.TransactionId
                 });
 
+                _carEventProducer.SendOrderDoneMessage(new CarOrderConfirmedMessage()
+                {
+                    TransactionId = model.TransactionId,
+                    CarRentId = carRentId
+                });
+               // throw  new Exception();
                 return carRentId;
             }
             catch (Exception e)
             {
+
+                _carEventProducer.SendOrderNotCompleterdMessage(model.TransactionId);
                 Console.WriteLine(e);
-                throw;
+                return -1;
             }
            
         }
@@ -43,11 +56,11 @@ namespace CarService.Service
             try
             {
                 _rentRepository.CancelRentCar(transactionId);
+              
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }
     }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using OrderServiceApi.Models;
+﻿using System.Threading.Tasks;
 
-namespace OrderServiceApi.Service
+namespace OrderServiceApi.Messaging
 {
     public interface IOrderEventHandler
     {

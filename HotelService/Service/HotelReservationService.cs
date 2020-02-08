@@ -43,8 +43,9 @@ namespace HotelService.Service
             catch (Exception e)
             {
                 Console.WriteLine(e);
+            
                 _hotelEventProducer.SendOrderNotCompleterdMessage(model.TransactionId);
-                throw;
+                return -1;
             }
 
         }
@@ -54,11 +55,11 @@ namespace HotelService.Service
             try
             {
                 _reservationRepository.CancelReserveHotel(transationId);
+                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }
     }

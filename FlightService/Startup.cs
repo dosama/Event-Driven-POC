@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FlightService.Data;
+using FlightService.Messaging;
 using FlightService.Repositories.Bookings;
 using FlightService.Service;
 using Microsoft.AspNetCore.Builder;
@@ -30,12 +31,15 @@ namespace FlightService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-           
-            services.AddSingleton<IFlightBookingService, FlightBookingService>();
-            services.AddSingleton<IBookingRepository, BookingRepository>();
             services.AddDbContext<FlightContext>
                 (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
+
+            services.AddSingleton<IFlightBookingService, FlightBookingService>();
+            services.AddSingleton<IBookingRepository, BookingRepository>();
+            services.AddSingleton<IFlightEventHandler, FlightEventHandler>();
+            services.AddSingleton<IFlightEventProducer, FlightEventProducer>();
+            services.AddSingleton<IKafkaService, KafkaService>();
+            services.AddSingleton<IMessageSerializer, MessageSelrializer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

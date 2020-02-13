@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FlightService.Data;
 using FlightService.Messaging;
 using FlightService.Repositories.Bookings;
+using FlightService.Repositories.MessageLogs;
 using FlightService.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,7 @@ namespace FlightService
                 (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
 
             services.AddSingleton<IFlightBookingService, FlightBookingService>();
+            services.AddSingleton<IMessageLogsRepository, MessageLogsRepository>();
             services.AddSingleton<IBookingRepository, BookingRepository>();
             services.AddSingleton<IFlightEventHandler, FlightEventHandler>();
             services.AddSingleton<IFlightEventProducer, FlightEventProducer>();

@@ -15,6 +15,7 @@ namespace CarService.Data
         {
         }
 
+        public virtual DbSet<MessageLogs> MessageLogs { get; set; }
         public virtual DbSet<Rents> Rents { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -22,12 +23,21 @@ namespace CarService.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=localhost;Database=Car;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=Car;Trusted_Connection=True;ConnectRetryCount=0");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<MessageLogs>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("date");
+
+                entity.Property(e => e.Topic).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<Rents>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");

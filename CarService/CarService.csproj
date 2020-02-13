@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Compile Include="Data\CarContext.cs" />
+    <Compile Include="Data\MessageLogs.cs" />
     <Compile Include="Data\Rents.cs" />
   </ItemGroup>
 

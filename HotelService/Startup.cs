@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HotelService.Data;
 using HotelService.Messaging;
+using HotelService.Repositories.MessageLogs;
 using HotelService.Repositories.Reservations;
 using HotelService.Service;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,7 @@ namespace HotelService
                 (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
 
             services.AddSingleton<IHotelReservationService, HotelReservationService>();
+            services.AddSingleton<IMessageLogsRepository, MessageLogsRepository>();
             services.AddSingleton<IReservationRepository, ReservationRepository>();
             services.AddSingleton<IHotelEventHandler, HotelEventHandler>();
             services.AddSingleton<IHotelEventProducer, HotelEventProducer>();

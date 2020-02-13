@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OrderServiceApi.Data;
 using OrderServiceApi.Messaging;
+using OrderServiceApi.Repositories.MessageLogs;
 using OrderServiceApi.Repositories.Order;
 using OrderServiceApi.Service;
 using OrderServiceApi.SMS;
@@ -36,6 +37,7 @@ namespace OrderServiceApi
                 (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
 
             services.AddSingleton<IOrderService, OrderService>();
+            services.AddSingleton<IMessageLogsRepository, MessageLogsRepository>();
             services.AddSingleton<IOrderRepository, OrderRepository>();
             services.AddSingleton<IOrderEventHandler, OrderEventHandler>();
             services.AddSingleton<IOrderEventProducer, OrderEventProducer>();

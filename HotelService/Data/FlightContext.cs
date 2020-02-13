@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace FlightService.Data
+namespace HotelService.Data
 {
     public partial class FlightContext : DbContext
     {
@@ -16,7 +16,8 @@ namespace FlightService.Data
         }
 
         public virtual DbSet<Bookings> Bookings { get; set; }
-        public virtual DbSet<MessageLogs> MessageLogs { get; set; }
+
+        // Unable to generate entity type for table 'dbo.MessageLog'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -43,15 +44,6 @@ namespace FlightService.Data
                     .IsRequired()
                     .HasColumnName("TransactionID")
                     .HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<MessageLogs>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.CreatedDate).HasColumnType("date");
-
-                entity.Property(e => e.Topic).HasMaxLength(50);
             });
         }
     }

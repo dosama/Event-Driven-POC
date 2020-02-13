@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using CarService.Repositories.MessageLogs;
 using Confluent.Kafka;
 
 namespace CarService.Messaging
@@ -10,9 +12,11 @@ namespace CarService.Messaging
         private IProducer<string, string> _kafkaProducer;
         private IConsumer<string,string> _kafkaConsumer;
         private IServiceProvider _serviceProvider;
+        private IMessageLogsRepository _messageLogsRepository;
 
-        public KafkaService(IServiceProvider serviceProvider)
+        public KafkaService(IServiceProvider serviceProvider, IMessageLogsRepository messageLogsRepository)
         {
+            _messageLogsRepository = messageLogsRepository;
             _serviceProvider = serviceProvider;
             Initialize("localhost:9092");
             new Thread(() => StartConsumeMessages()).Start();
@@ -56,15 +60,31 @@ namespace CarService.Messaging
                 e.Cancel = true; // prevent the process from terminating.
                 cts.Cancel();
             };
-
+            bool flag = true;
             try
             {
                 while (true)
                 {
                     try
                     {
+                        if (flag)
+                        {
+                            List<TopicPartition> assignments = _kafkaConsumer.Assignment;
+                            assignments.ForEach(topicPartition =>
+                                _kafkaConsumer.Seek(new TopicPartitionOffset(topicPartition.Topic, topicPartition.Partition, new Offset(_messageLogsRepository.GetLastOffset()))));
+                            flag = false;
+                        }
                         var result = _kafkaConsumer.Consume(cts.Token);
                         eventHandler.Handle(result.Key, result.Value);
+
+                        _messageLogsRepository.Log(new CarService.Data.MessageLogs
+                            {
+                                CreatedDate = DateTime.Parse(DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")),
+                                Message = "key: " + result.Key + "Value: " + result.Value,
+                                Topic = KafkaConstants.Order_Topic,
+                                Offset = result.TopicPartitionOffset.Offset.Value
+                            }
+                        );
                         Console.WriteLine($"Consumed message '{result.Value}' at: '{result.TopicPartitionOffset}'.");
                     }
                     catch (ConsumeException e)

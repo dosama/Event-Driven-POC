@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CarService.Data;
 using CarService.Messaging;
 using CarService.Repositories;
+using CarService.Repositories.MessageLogs;
 using CarService.Repositories.Rents;
 using CarService.Service;
 using Microsoft.AspNetCore.Builder;
@@ -36,7 +37,7 @@ namespace CarService
                 (options => options.UseSqlServer(Configuration["DBConnectionString"]), ServiceLifetime.Singleton);
             services.AddSingleton<IRentCarService, RentCarService>();
             services.AddSingleton<IRentRepository, RentRepository>();
-
+            services.AddSingleton<IMessageLogsRepository, MessageLogsRepository>();
             services.AddSingleton<ICarEventHandler, CarEventHandler>();
             services.AddSingleton<ICarEventProducer, CarEventProducer>();
             services.AddSingleton<IKafkaService, KafkaService>();
